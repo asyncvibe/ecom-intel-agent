@@ -10,7 +10,7 @@ from bson import ObjectId
 from typing import List
 from datetime import datetime
 from database import db  # Assuming db["products"] etc. are your collections
-# -------------------------- SUMMARY REPORT ROUTES --------------------------
+
 report_router = APIRouter(prefix="/summary", tags=["Summary Reports"])
 
 @report_router.get("/{product_id}", response_model=SummaryReportModel)

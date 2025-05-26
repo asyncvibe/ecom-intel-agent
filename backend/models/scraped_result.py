@@ -19,7 +19,7 @@ class ScrapedResultModel(BaseModel):
     url: str
     title: str
     price: Optional[float]
-    specs: Dict[str, str]
+    specifications: Dict[str, str]
     rating: Optional[float]
     reviews: List[ReviewModel]
     scraped_at: datetime = Field(default_factory=datetime.utcnow)

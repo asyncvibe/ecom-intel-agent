@@ -1,8 +1,7 @@
-# models/sentiment.py
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
-from datetime import datetime
-from utils.mongo import PyObjectId
+from datetime import datetime,timezone
+from ..utils.mongo import PyObjectId
 from bson import ObjectId
 from typing import List, Literal, Optional, Dict
 class SentimentAnalysisModel(BaseModel):
@@ -13,7 +12,7 @@ class SentimentAnalysisModel(BaseModel):
     keywords: Dict[str, List[str]]
     top_positive_review: str
     top_negative_review: str
-    processed_at: datetime = Field(default_factory=datetime.utcnow)
+    processed_at: datetime = Field(default_factory=datetime.now(timezone.utc))
 
     class Config:
         allow_population_by_field_name = True

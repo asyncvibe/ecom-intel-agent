@@ -2,12 +2,13 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from datetime import datetime, timedelta, timezone
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from passlib.context import CryptContext
 from ..db.database import users_collection
 from ..models.user import UserModel
 from bson import ObjectId
 import os
+from typing import Optional
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -28,7 +29,7 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     user_id: str
-    email: str
+    email: EmailStr
 
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
@@ -51,15 +52,19 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> UserModel:
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: str = payload.get("user_id")
-        email: str = payload.get("email")
+        user_id: Optional[str] = str(payload.get("user_id")) if payload.get("user_id") else None
+        email: Optional[str] = str(payload.get("email")) if payload.get("email") else None
+        
         if user_id is None or email is None:
             raise credentials_exception
         token_data = TokenData(user_id=user_id, email=email)
-    except JWTError:
+    except (JWTError, ValueError):
         raise credentials_exception
     
-    user = users_collection.find_one({"_id": ObjectId(token_data.user_id), "email": token_data.email})
-    if user is None:
+    try:
+        user = users_collection.find_one({"_id": ObjectId(token_data.user_id), "email": token_data.email})
+        if user is None:
+            raise credentials_exception
+        return UserModel(**user)
+    except Exception:
         raise credentials_exception
-    return UserModel(**user)
