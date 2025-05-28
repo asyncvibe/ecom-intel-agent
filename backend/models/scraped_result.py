@@ -1,6 +1,5 @@
 from typing import List, Dict
-from pydantic import BaseModel
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from typing import Optional
 from datetime import datetime
 from utils.mongo import PyObjectId
@@ -24,7 +23,8 @@ class ScrapedResultModel(BaseModel):
     reviews: List[ReviewModel]
     scraped_at: datetime = Field(default_factory=datetime.utcnow)
 
-    class Config:
-        allow_population_by_field_name = True
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
+        populate_by_name=True,
+        json_encoders={ObjectId: str}
+    )

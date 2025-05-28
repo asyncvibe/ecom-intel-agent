@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from typing import Optional
 from datetime import datetime,timezone
 from ..utils.mongo import PyObjectId
@@ -14,7 +14,8 @@ class SentimentAnalysisModel(BaseModel):
     top_negative_review: str
     processed_at: datetime = Field(default_factory=datetime.now(timezone.utc))
 
-    class Config:
-        allow_population_by_field_name = True
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
+        populate_by_name=True,
+        json_encoders={ObjectId: str}
+    )

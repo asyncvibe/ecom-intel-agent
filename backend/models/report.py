@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from typing import Optional
 from datetime import datetime, timezone
 from bson import ObjectId
@@ -20,7 +20,9 @@ class SummaryReportModel(BaseModel):
     improvement_opportunities: Optional[List[str]] = None
     recommendations: Optional[List[str]] = None
 
-    class Config:
-        validate_by_name = True  # pydantic v2+ key
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
+    model_config = ConfigDict(
+        validate_assignment=True,
+        arbitrary_types_allowed=True,
+        populate_by_name=True,
+        json_encoders={ObjectId: str}
+    )

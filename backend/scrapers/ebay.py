@@ -51,8 +51,8 @@ async def scrape_product_ebay(product_name, max_products=1, max_retries=3):
                     await asyncio.sleep(2)
             
             # Take a screenshot for debugging if needed
-            await page.screenshot(path="screenshot.png")
-            print("Saved screenshot to screenshot.png for debugging")
+            # await page.screenshot(path="screenshot.png")
+            # print("Saved screenshot to screenshot.png for debugging")
             
             # Get multiple product links (eBay)
             print("Looking for product links...")
